@@ -224,3 +224,128 @@ func TestAPP_LoadUsersFromJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestAPP_LoadTicketsFromJSON(t *testing.T) {
+	organisation := &model.Organisation{
+		ID: 119,
+	}
+
+	user := &model.User{
+		ID:           111,
+		Organization: organisation,
+	}
+
+	type fields struct {
+		app *APP
+	}
+	type args struct {
+		jsonContent []byte
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+		wantApp *APP
+	}{
+		{
+			name: "can load tickets from json",
+			fields: fields{
+				app: &APP{
+					organisations: map[string]*model.Organisation{
+						"119": organisation,
+					},
+					users: map[string]*model.User{
+						"111": user,
+					},
+				},
+			},
+			args: args{
+				jsonContent: []byte(`[{
+					  "_id": "436bf9b0-1147-4c0a-8439-6f79833bff5b",
+					  "url": "http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json",
+					  "external_id": "9210cdc9-4bee-485f-a078-35396cd74063",
+					  "created_at": "2016-04-28T11:19:34 -10:00",
+					  "type": "incident",
+					  "subject": "A Catastrophe in Korea (North)",
+					  "description": "Nostrud ad sit velit cupidatat laboris ipsum nisi amet laboris ex exercitation amet et proident. Ipsum fugiat aute dolore tempor nostrud velit ipsum.",
+					  "priority": "high",
+					  "status": "pending",
+					  "submitter_id": 111,
+					  "assignee_id": 111,
+					  "organization_id": 119,
+					  "tags": [
+						"Ohio",
+						"Pennsylvania",
+						"American Samoa",
+						"Northern Mariana Islands"
+					  ],
+					  "has_incidents": false,
+					  "due_at": "2016-07-31T02:37:50 -10:00",
+					  "via": "web"
+					}]`),
+			},
+			wantErr: false,
+			wantApp: &APP{
+				organisations: map[string]*model.Organisation{
+					"119": organisation,
+				},
+				users: map[string]*model.User{
+					"111": user,
+				},
+				tickets: map[string]*model.Ticket{
+					"436bf9b0-1147-4c0a-8439-6f79833bff5b": &model.Ticket{
+						ID:           "436bf9b0-1147-4c0a-8439-6f79833bff5b",
+						URL:          "http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json",
+						ExternalID:   "9210cdc9-4bee-485f-a078-35396cd74063",
+						CreatedAt:    "2016-04-28T11:19:34 -10:00",
+						Type:         "incident",
+						Subject:      "A Catastrophe in Korea (North)",
+						Description:  "Nostrud ad sit velit cupidatat laboris ipsum nisi amet laboris ex exercitation amet et proident. Ipsum fugiat aute dolore tempor nostrud velit ipsum.",
+						Priority:     "high",
+						Status:       "pending",
+						Submitter:    user,
+						Assignee:     user,
+						Organization: organisation,
+						Tags: []string{
+							"Ohio",
+							"Pennsylvania",
+							"American Samoa",
+							"Northern Mariana Islands",
+						},
+						HasIncidents: false,
+						DueAt:        "2016-07-31T02:37:50 -10:00",
+						Via:          "web",
+					},
+				},
+			},
+		},
+		{
+			name: "cannot load tickets from json due to json is not valid",
+			fields: fields{
+				app: &APP{},
+			},
+			args: args{
+				jsonContent: []byte(`[{
+					"_id": 101,
+					"url" "http://initech.zendesk.com/api/v2/organizations/101.json"
+					]}]`),
+			},
+			wantErr: true,
+			wantApp: &APP{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := tt.fields.app
+			if err := app.LoadTicketsFromJSON(tt.args.jsonContent); (err != nil) != tt.wantErr {
+				t.Errorf("APP.LoadTicketsFromJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			if !reflect.DeepEqual(app, tt.wantApp) {
+				t.Errorf("LoadTicketsFromJSON() got = %v, want %v", app, tt.wantApp)
+			}
+
+		})
+	}
+}

@@ -15,3 +15,8 @@ type APP struct {
 func (app *APP) FindOrganisation(id string) *model.Organisation {
 	return app.organisations[id]
 }
+
+// FindUser find a user by user ID
+func (app *APP) FindUser(id string) *model.User {
+	return app.users[id]
+}
