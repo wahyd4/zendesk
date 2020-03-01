@@ -3,12 +3,28 @@ package search
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/wahyd4/zendesk/model"
 	"github.com/wahyd4/zendesk/view"
 )
 
+// type dataHandler func(jsonContent []byte) error
+
 func (app *APP) Parse(jsonFiles []string) error {
+	// dataHandlers := map[string]dataHandler{
+	// 	"organisations": app.LoadOrganisationsFromJSON,
+	// 	"users":         app.LoadUsersFromJSON,
+	// 	"tickets":       app.LoadTicketsFromJSON,
+	// }
+
+	for _, file := range jsonFiles {
+		_, err := ioutil.ReadFile(file)
+		if err != nil {
+			return fmt.Errorf("failed to read %s data file with error: %s", file, err.Error())
+		}
+
+	}
 	return nil
 }
 

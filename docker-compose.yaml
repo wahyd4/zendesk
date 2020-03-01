@@ -1,0 +1,11 @@
+version: "3"
+services:
+  app:
+    image: golang:1.13
+    working_dir: /app/zendesk
+    volumes:
+      - .:/app/zendesk
+      - go-libs:/go/pkg
+    command: ["sh", "-c", "go run main.go"]
+volumes:
+  go-libs: {}
