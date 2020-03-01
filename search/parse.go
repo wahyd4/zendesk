@@ -3,33 +3,33 @@ package search
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 
 	"github.com/wahyd4/zendesk/model"
 	"github.com/wahyd4/zendesk/view"
 )
 
-// type dataHandler func(jsonContent []byte) error
+type dataHandler func(jsonContent []byte) error
 
-func (app *APP) Parse(jsonFiles []string) error {
-	// dataHandlers := map[string]dataHandler{
-	// 	"organisations": app.LoadOrganisationsFromJSON,
-	// 	"users":         app.LoadUsersFromJSON,
-	// 	"tickets":       app.LoadTicketsFromJSON,
-	// }
+// Parse parse all json contents and build all data and it's relationships  into app
+func (app *APP) Parse() error {
+	dataHandlers := map[string]dataHandler{
+		"organisations": app.LoadOrganisationsFromJSON,
+		"users":         app.LoadUsersFromJSON,
+		"tickets":       app.LoadTicketsFromJSON,
+	}
 
-	for _, file := range jsonFiles {
-		_, err := ioutil.ReadFile(file)
+	for dataType, dataHandler := range dataHandlers {
+		err := dataHandler(app.jsonContents[dataType])
 		if err != nil {
-			return fmt.Errorf("failed to read %s data file with error: %s", file, err.Error())
+			return fmt.Errorf("failed to read %s data file with error: %s", dataType, err.Error())
 		}
-
 	}
 	return nil
 }
 
 func (app *APP) LoadOrganisationsFromJSON(jsonContent []byte) error {
 	var organisations []*view.Organisation
+
 	err := json.Unmarshal(jsonContent, &organisations)
 	if err != nil {
 		return fmt.Errorf("failed to load organisations from json: %s", err.Error())
@@ -40,6 +40,7 @@ func (app *APP) LoadOrganisationsFromJSON(jsonContent []byte) error {
 
 func (app *APP) LoadUsersFromJSON(jsonContent []byte) error {
 	var users []*view.User
+
 	err := json.Unmarshal(jsonContent, &users)
 	if err != nil {
 		return fmt.Errorf("failed to load users from json: %s", err.Error())
@@ -50,6 +51,7 @@ func (app *APP) LoadUsersFromJSON(jsonContent []byte) error {
 
 func (app *APP) LoadTicketsFromJSON(jsonContent []byte) error {
 	var tickets []*view.Ticket
+
 	err := json.Unmarshal(jsonContent, &tickets)
 	if err != nil {
 		return fmt.Errorf("failed to load tickets from json: %s", err.Error())

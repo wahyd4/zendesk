@@ -1,8 +1,9 @@
 package search
 
 import (
-	"reflect"
 	"testing"
+
+	"reflect"
 
 	"github.com/wahyd4/zendesk/model"
 )
@@ -346,6 +347,192 @@ func TestAPP_LoadTicketsFromJSON(t *testing.T) {
 				t.Errorf("LoadTicketsFromJSON() got = %v, want %v", app, tt.wantApp)
 			}
 
+		})
+	}
+}
+
+func TestAPP_Parse(t *testing.T) {
+
+	organisation := &model.Organisation{
+		ID:         999,
+		URL:        "http://initech.zendesk.com/api/v2/organizations/101.json",
+		ExternalID: "9270ed79-35eb-4a38-a46f-35725197ea8d",
+		Name:       "Enthaze",
+		DomainNames: []string{
+			"kage.com",
+			"ecratic.com",
+			"endipin.com",
+			"zentix.com",
+		},
+		CreatedAt:     "2016-05-21T11:10:28 -10:00",
+		Details:       "MegaCorp",
+		SharedTickets: false,
+		Tags: []string{
+			"Fulton",
+			"West",
+			"Rodriguez",
+			"Farley",
+		},
+	}
+
+	user := &model.User{
+		ID:           222,
+		URL:          "http://initech.zendesk.com/api/v2/users/1.json",
+		ExternalID:   "74341f74-9c79-49d5-9611-87ef9b6eb75f",
+		Name:         "Francisca Rasmussen",
+		Alias:        "Miss Coffey",
+		CreatedAt:    "2016-04-15T05:19:46 -10:00",
+		Active:       true,
+		Verified:     true,
+		Shared:       false,
+		Locale:       "en-AU",
+		Timezone:     "Sri Lanka",
+		LastLoginAt:  "2013-08-04T01:03:27 -10:00",
+		Email:        "coffeyrasmussen@flotonic.com",
+		Phone:        "8335-422-718",
+		Signature:    "Don't Worry Be Happy!",
+		Organization: organisation,
+		Tags: []string{
+			"Springville",
+			"Sutton",
+			"Hartsville/Hartley",
+			"Diaperville",
+		},
+		Suspended: true,
+		Role:      "admin",
+	}
+
+	type fields struct {
+		jsonContents map[string][]byte
+		app          *APP
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+		wantApp *APP
+	}{
+		{
+			name: "can parse all types of data and build data models",
+			fields: fields{
+				jsonContents: map[string][]byte{
+					"organisations": []byte(`[{
+						"_id": 999,
+						"url": "http://initech.zendesk.com/api/v2/organizations/101.json",
+						"external_id": "9270ed79-35eb-4a38-a46f-35725197ea8d",
+						"name": "Enthaze",
+						"domain_names": [
+							"kage.com",
+							"ecratic.com",
+							"endipin.com",
+							"zentix.com"
+						],
+						"created_at": "2016-05-21T11:10:28 -10:00",
+						"details": "MegaCorp",
+						"shared_tickets": false,
+						"tags": [
+							"Fulton",
+							"West",
+							"Rodriguez",
+							"Farley"
+						]}]`),
+					"users": []byte(`[{
+						"_id": 222,
+						"url": "http://initech.zendesk.com/api/v2/users/1.json",
+						"external_id": "74341f74-9c79-49d5-9611-87ef9b6eb75f",
+						"name": "Francisca Rasmussen",
+						"alias": "Miss Coffey",
+						"created_at": "2016-04-15T05:19:46 -10:00",
+						"active": true,
+						"verified": true,
+						"shared": false,
+						"locale": "en-AU",
+						"timezone": "Sri Lanka",
+						"last_login_at": "2013-08-04T01:03:27 -10:00",
+						"email": "coffeyrasmussen@flotonic.com",
+						"phone": "8335-422-718",
+						"signature": "Don't Worry Be Happy!",
+						"organization_id": 111,
+						"tags": [
+						  "Springville",
+						  "Sutton",
+						  "Hartsville/Hartley",
+						  "Diaperville"
+						],
+						"suspended": true,
+						"role": "admin"
+					  }]`),
+					"tickets": []byte(`[{
+						"_id": "436bf9b0-1147-4c0a-8439-6f79833bff5b",
+						"url": "http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json",
+						"external_id": "9210cdc9-4bee-485f-a078-35396cd74063",
+						"created_at": "2016-04-28T11:19:34 -10:00",
+						"type": "incident",
+						"subject": "A Catastrophe in Korea (North)",
+						"description": "Nostrud ad sit velit cupidatat laboris ipsum nisi amet laboris ex exercitation amet et proident. Ipsum fugiat aute dolore tempor nostrud velit ipsum.",
+						"priority": "high",
+						"status": "pending",
+						"submitter_id": 222,
+						"assignee_id": 222,
+						"organization_id": 999,
+						"tags": [
+						  "Ohio",
+						  "Pennsylvania",
+						  "American Samoa",
+						  "Northern Mariana Islands"
+						],
+						"has_incidents": false,
+						"due_at": "2016-07-31T02:37:50 -10:00",
+						"via": "web"
+					  }]`),
+				},
+				app: &APP{},
+			},
+			wantErr: false,
+			wantApp: &APP{
+				organisations: map[string]*model.Organisation{
+					"999": organisation,
+				},
+				users: map[string]*model.User{
+					"222": user,
+				},
+				tickets: map[string]*model.Ticket{
+					"436bf9b0-1147-4c0a-8439-6f79833bff5b": &model.Ticket{
+						ID:           "436bf9b0-1147-4c0a-8439-6f79833bff5b",
+						URL:          "http://initech.zendesk.com/api/v2/tickets/436bf9b0-1147-4c0a-8439-6f79833bff5b.json",
+						ExternalID:   "9210cdc9-4bee-485f-a078-35396cd74063",
+						CreatedAt:    "2016-04-28T11:19:34 -10:00",
+						Type:         "incident",
+						Subject:      "A Catastrophe in Korea (North)",
+						Description:  "Nostrud ad sit velit cupidatat laboris ipsum nisi amet laboris ex exercitation amet et proident. Ipsum fugiat aute dolore tempor nostrud velit ipsum.",
+						Priority:     "high",
+						Status:       "pending",
+						Submitter:    user,
+						Assignee:     user,
+						Organization: organisation,
+						Tags: []string{
+							"Ohio",
+							"Pennsylvania",
+							"American Samoa",
+							"Northern Mariana Islands",
+						},
+						HasIncidents: false,
+						DueAt:        "2016-07-31T02:37:50 -10:00",
+						Via:          "web",
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			app := tt.fields.app
+			app.jsonContents = tt.fields.jsonContents
+
+			if err := app.Parse(); (err != nil) != tt.wantErr {
+				t.Errorf("APP.Parse() error = %v, wantErr %v", err, tt.wantErr)
+			}
 		})
 	}
 }

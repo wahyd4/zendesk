@@ -6,6 +6,7 @@ import (
 
 // APP represents the application
 type APP struct {
+	jsonContents  map[string][]byte
 	organisations map[string]*model.Organisation
 	users         map[string]*model.User
 	tickets       map[string]*model.Ticket
