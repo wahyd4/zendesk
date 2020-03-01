@@ -22,8 +22,11 @@ type APP struct {
 	organisationIndex map[string]map[string][]*model.Organisation
 	userIndex         map[string]map[string][]*model.User
 	ticketIndex       map[string]map[string][]*model.Ticket
+
+	searchContext *SearchContext
 }
 
+// InitAPP takes data file paths and then initialise the application
 func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 	files := map[string]string{
 		OrganisationsKey: organisationsFile,
@@ -44,6 +47,7 @@ func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 		organisationIndex: make(map[string]map[string][]*model.Organisation),
 		userIndex:         make(map[string]map[string][]*model.User),
 		ticketIndex:       make(map[string]map[string][]*model.Ticket),
+		searchContext:     &SearchContext{},
 	}
 }
 
