@@ -13,9 +13,9 @@ type dataHandler func(jsonContent []byte) error
 // Parse parse all json contents and build all data and it's relationships  into app
 func (app *APP) Parse() error {
 	dataHandlers := map[string]dataHandler{
-		"organisations": app.LoadOrganisationsFromJSON,
-		"users":         app.LoadUsersFromJSON,
-		"tickets":       app.LoadTicketsFromJSON,
+		OrganisationsKey: app.LoadOrganisationsFromJSON,
+		UsersKey:         app.LoadUsersFromJSON,
+		TicketsKey:       app.LoadTicketsFromJSON,
 	}
 
 	for dataType, dataHandler := range dataHandlers {
@@ -63,7 +63,7 @@ func (app *APP) LoadTicketsFromJSON(jsonContent []byte) error {
 func convertOrganisationViews(views []*view.Organisation) map[string]*model.Organisation {
 	models := make(map[string]*model.Organisation)
 	for _, view := range views {
-		models[stringID(view.ID)] = convertOrganisationView(view)
+		models[stringifyID(view.ID)] = convertOrganisationView(view)
 	}
 	return models
 }
@@ -71,7 +71,7 @@ func convertOrganisationViews(views []*view.Organisation) map[string]*model.Orga
 func (app *APP) convertUserViews(views []*view.User) map[string]*model.User {
 	models := make(map[string]*model.User)
 	for _, view := range views {
-		models[stringID(view.ID)] = app.convertUserView(view)
+		models[stringifyID(view.ID)] = app.convertUserView(view)
 	}
 	return models
 }
@@ -115,7 +115,7 @@ func (app *APP) convertUserView(view *view.User) *model.User {
 		Email:        view.Email,
 		Phone:        view.Phone,
 		Signature:    view.Signature,
-		Organization: app.FindOrganisation(stringID(view.OrganizationID)),
+		Organization: app.FindOrganisation(stringifyID(view.OrganizationID)),
 		Tags:         view.Tags,
 		Suspended:    view.Suspended,
 		Role:         view.Role,
@@ -133,9 +133,9 @@ func (app *APP) convertTicketView(view *view.Ticket) *model.Ticket {
 		Description:  view.Description,
 		Priority:     view.Priority,
 		Status:       view.Status,
-		Submitter:    app.FindUser(stringID(view.SubmitterID)),
-		Assignee:     app.FindUser(stringID(view.AssigneeID)),
-		Organization: app.FindOrganisation(stringID(view.OrganizationID)),
+		Submitter:    app.FindUser(stringifyID(view.SubmitterID)),
+		Assignee:     app.FindUser(stringifyID(view.AssigneeID)),
+		Organization: app.FindOrganisation(stringifyID(view.OrganizationID)),
 		Tags:         view.Tags,
 		HasIncidents: view.HasIncidents,
 		DueAt:        view.DueAt,
