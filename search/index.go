@@ -32,6 +32,7 @@ func (app *APP) BuildIndexes() error {
 			return fmt.Errorf("failed to build index for %s with error: %w", indexType, err)
 		}
 	}
+
 	return nil
 }
 
