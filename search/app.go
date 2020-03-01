@@ -3,6 +3,7 @@ package search
 import (
 	"io/ioutil"
 
+	"github.com/wahyd4/zendesk/index"
 	"github.com/wahyd4/zendesk/model"
 )
 
@@ -19,10 +20,7 @@ type APP struct {
 	users         map[string]*model.User
 	tickets       map[string]*model.Ticket
 
-	organisationIndex map[string]map[string][]*model.Organisation
-	userIndex         map[string]map[string][]*model.User
-	ticketIndex       map[string]map[string][]*model.Ticket
-
+	indexes       map[string]index.SearchIndex
 	searchContext *SearchContext
 }
 
@@ -43,11 +41,9 @@ func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 	}
 
 	return &APP{
-		jsonContents:      jsonContents,
-		organisationIndex: make(map[string]map[string][]*model.Organisation),
-		userIndex:         make(map[string]map[string][]*model.User),
-		ticketIndex:       make(map[string]map[string][]*model.Ticket),
-		searchContext:     &SearchContext{},
+		jsonContents:  jsonContents,
+		indexes:       make(map[string]index.SearchIndex),
+		searchContext: &SearchContext{},
 	}
 }
 

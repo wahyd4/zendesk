@@ -11,10 +11,24 @@ func (app *APP) UpdateDataType(dataType string) {
 	app.searchContext = &SearchContext{
 		dataType: dataType,
 	}
-
 }
 
 // UpdateFieldName updates search field name of a data type
 func (app *APP) UpdateFieldName(fieldName string) {
 	app.searchContext.fieldName = fieldName
+}
+
+// ListSearchableFields list all the searchable fields
+func (app *APP) ListSearchableFields() []string {
+	dataType := app.searchContext.dataType
+
+	return app.indexes[dataType].ListSearchableFields()
+}
+
+// ListSearchableFields list all the searchable fields
+func (app *APP) Search(value string) []string {
+	dataType := app.searchContext.dataType
+	field := app.searchContext.fieldName
+
+	return app.indexes[dataType].Search(field, value)
 }

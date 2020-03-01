@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/wahyd4/zendesk/index"
 	"github.com/wahyd4/zendesk/model"
 )
 
@@ -49,7 +50,7 @@ func (app *APP) buildOrganisationIndex() error {
 	if len(organisations) == 0 {
 		return nil
 	}
-	searchIndex := app.organisationIndex
+	searchIndex := make(map[string]map[string][]*model.Organisation)
 
 	// get first entity from json array as the template
 	organisationsTemplate := organisations[0]
@@ -78,6 +79,10 @@ func (app *APP) buildOrganisationIndex() error {
 
 		}
 	}
+	// update index
+	app.indexes[OrganisationsKey] = index.OrganisationIndex{
+		Data: searchIndex,
+	}
 	return nil
 }
 
@@ -94,7 +99,7 @@ func (app *APP) buildUserIndex() error {
 	if len(users) == 0 {
 		return nil
 	}
-	searchIndex := app.userIndex
+	searchIndex := make(map[string]map[string][]*model.User)
 
 	// get first entity from json array as the template
 	entityTemplate := users[0]
@@ -123,6 +128,10 @@ func (app *APP) buildUserIndex() error {
 
 		}
 	}
+	// update index
+	app.indexes[UsersKey] = index.UserIndex{
+		Data: searchIndex,
+	}
 	return nil
 }
 
@@ -139,7 +148,7 @@ func (app *APP) buildTicketIndex() error {
 	if len(tickets) == 0 {
 		return nil
 	}
-	searchIndex := app.ticketIndex
+	searchIndex := make(map[string]map[string][]*model.Ticket)
 
 	// get first entity from json array as the template
 	entityTemplate := tickets[0]
@@ -173,6 +182,11 @@ func (app *APP) buildTicketIndex() error {
 			}
 
 		}
+	}
+
+	// update index
+	app.indexes[TicketsKey] = index.TicketIndex{
+		Data: searchIndex,
 	}
 	return nil
 }
