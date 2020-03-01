@@ -20,8 +20,8 @@ type APP struct {
 	tickets       map[string]*model.Ticket
 
 	organisationIndex map[string]map[string][]*model.Organisation
-	// userIndex         map[string]map[string][]*model.User
-	// ticketIndex       map[string]map[string][]*model.Ticket
+	userIndex         map[string]map[string][]*model.User
+	ticketIndex       map[string]map[string][]*model.Ticket
 }
 
 func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
@@ -42,6 +42,8 @@ func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 	return &APP{
 		jsonContents:      jsonContents,
 		organisationIndex: make(map[string]map[string][]*model.Organisation),
+		userIndex:         make(map[string]map[string][]*model.User),
+		ticketIndex:       make(map[string]map[string][]*model.Ticket),
 	}
 }
 
@@ -53,4 +55,9 @@ func (app *APP) FindOrganisation(id string) *model.Organisation {
 // FindUser find a user by user ID
 func (app *APP) FindUser(id string) *model.User {
 	return app.users[id]
+}
+
+// FindTicket find a ticket by ticket ID
+func (app *APP) FindTicket(id string) *model.Ticket {
+	return app.tickets[id]
 }
