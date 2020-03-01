@@ -1,6 +1,9 @@
 package index
 
-import "github.com/wahyd4/zendesk/model"
+import (
+	"github.com/davecgh/go-spew/spew"
+	"github.com/wahyd4/zendesk/model"
+)
 
 type TicketIndex struct {
 	Data map[string]map[string][]*model.Ticket
@@ -14,12 +17,9 @@ func (index TicketIndex) ListSearchableFields() []string {
 	return result
 }
 
-func (index TicketIndex) Search(field, value string) []string {
+func (index TicketIndex) Search(field, value string) {
 	tickets := index.Data[field][value]
 
-	var result []string
-	for _, ticket := range tickets {
-		result = append(result, ticket.Print())
-	}
-	return result
+	spew.Dump(tickets)
+
 }

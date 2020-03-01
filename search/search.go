@@ -26,9 +26,9 @@ func (app *APP) ListSearchableFields() []string {
 }
 
 // ListSearchableFields list all the searchable fields
-func (app *APP) Search(value string) []string {
+func (app *APP) Search(value string) {
 	dataType := app.searchContext.dataType
 	field := app.searchContext.fieldName
 
-	return app.indexes[dataType].Search(field, value)
+	app.indexes[dataType].Search(field, value)
 }

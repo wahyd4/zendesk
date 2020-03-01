@@ -1,6 +1,9 @@
 package index
 
-import "github.com/wahyd4/zendesk/model"
+import (
+	"github.com/davecgh/go-spew/spew"
+	"github.com/wahyd4/zendesk/model"
+)
 
 type UserIndex struct {
 	Data map[string]map[string][]*model.User
@@ -14,12 +17,8 @@ func (index UserIndex) ListSearchableFields() []string {
 	return result
 }
 
-func (index UserIndex) Search(field, value string) []string {
+func (index UserIndex) Search(field, value string) {
 	users := index.Data[field][value]
 
-	var result []string
-	for _, user := range users {
-		result = append(result, user.Print())
-	}
-	return result
+	spew.Dump(users)
 }

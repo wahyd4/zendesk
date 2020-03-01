@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/manifoldco/promptui"
 	"github.com/wahyd4/zendesk/search"
 )
 
@@ -13,5 +16,40 @@ func main() {
 	if err := app.BuildIndexes(); err != nil {
 		panic("failed to build indexes: " + err.Error())
 	}
+
+	prompt := promptui.Select{
+		Label: "Select a type of data to search with",
+		Items: []string{search.OrganisationsKey, search.UsersKey, search.TicketsKey},
+	}
+
+	_, result, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+	app.UpdateDataType(result)
+
+	prompt = promptui.Select{
+		Label: "Select a field to search with",
+		Items: app.ListSearchableFields(),
+		Size:  20,
+	}
+
+	_, fieldName, err := prompt.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return
+	}
+	app.UpdateFieldName(fieldName)
+
+	input := promptui.Prompt{
+		Label: "Please search by typing value",
+	}
+
+	value, _ := input.Run()
+	fmt.Println("The value you typed is: " + value)
+	app.Search(value)
 
 }
