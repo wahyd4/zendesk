@@ -10,16 +10,19 @@ import (
 
 func main() {
 
-	app := search.InitAPP("data/organizations.json", "data/users.json", "data/tickets.json")
+	app, err := search.InitAPP("data/organizations.json", "data/users.json", "data/tickets.json")
+	if err != nil {
+		panic("cannot init application " + err.Error())
+	}
 
-	if err := app.Parse(); err != nil {
+	if err = app.Parse(); err != nil {
 		panic("cannot load data: " + err.Error())
 	}
 
 	if err := app.BuildIndexes(); err != nil {
 		panic("failed to build indexes: " + err.Error())
 	}
-	
+
 	for {
 
 		prompt := promptui.Select{

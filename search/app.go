@@ -1,6 +1,7 @@
 package search
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"github.com/wahyd4/zendesk/index"
@@ -25,7 +26,7 @@ type APP struct {
 }
 
 // InitAPP takes data file paths and then initialise the application
-func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
+func InitAPP(organisationsFile, usersFile, ticketsFile string) (*APP, error) {
 	files := map[string]string{
 		OrganisationsKey: organisationsFile,
 		UsersKey:         usersFile,
@@ -35,7 +36,7 @@ func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 	for fileType, file := range files {
 		bytes, err := ioutil.ReadFile(file)
 		if err != nil {
-			panic("cannot init application due to unable to load:" + file)
+			return nil, fmt.Errorf("cannot init application due to unable to load: %s with error %v", file, err.Error())
 		}
 		jsonContents[fileType] = bytes
 	}
@@ -44,7 +45,7 @@ func InitAPP(organisationsFile, usersFile, ticketsFile string) *APP {
 		jsonContents:  jsonContents,
 		indexes:       make(map[string]index.SearchIndex),
 		searchContext: &SearchContext{},
-	}
+	}, nil
 }
 
 // FindOrganisation find a organisation by organisation ID
