@@ -27,7 +27,9 @@ If there are something matched, the application will printed out all the informa
 
 Otherwise you should expect a error message says `Cannot find any matched result`
 
-    Notice: Due to the limited time, currently you can't go back in the CLI, if you want to skip the current search then just type `Enter`.
+    Notice: Due to the limited time, currently you can't go back in the CLI.
+
+    If you want to skip the current search then just type `Enter`.
 
 ###  How to test
 
