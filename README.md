@@ -3,18 +3,6 @@
 [![Github Build](https://github.com/wahyd4/zendesk/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/wahyd4/zendesk/actions)
 
 
-
-## How does it application work
-
-
-
-## Highlights
-
-- Had basic CI(Github workflow) pipeline setup
-- Containerised Application
-- Usd `map` to index all entities and fields, after all the entities been scanned, how many how many items we have, the time complexity is always O(1).
-- Used [table driven test](https://github.com/golang/go/wiki/TableDrivenTests)
-
 ## How to
 
 ### How to run
@@ -41,8 +29,6 @@ Otherwise you should expect a error message says `Cannot find any matched result
 
     Notice: Due to the limited time, currently you can't go back in the CLI, if you want to skip the current search then just type `Enter`.
 
-
-
 ###  How to test
 
 ```bash
@@ -66,6 +52,38 @@ go test ./... -cover
 GITHUB_RUN_NUMBER=1 ./auto/build
 
 ```
+
+## How does the application work
+
+The application loads `organisations`, `users` and `tickets` from json into memory, then puts them into models and sets up the relationships between models. For instance the `organisation` property in a `user` model.
+
+For the search part, in order to provide a better performance(which the time complexity for searching is `O(1)` ) the `BuildIndexes()` method will scan every model item and every field in that model to build a index map with two levels.
+
+For example the index map for `organisations` looks like:
+
+![organisations index map](./index_example.png)
+
+In first level the key is the field name, the value for the key is a another map, which each key presents one uniq value for that field, and the value is a array of all the matched model reference(pointer).
+
+Besides, I also created a `SearchIndex` to present one type of model which can be searched. So we end up with having `3` different indexes which implement `ListSearchableFields` and `Search` method for each model type. It decouples the logic and decreases the duplication.
+
+
+Last but not least, the `Search()` method will delegate the call the one `SearchIndex` and print out all the matched results.
+
+
+## Assumptions
+
+- All the data in json is valid, for example no invalid `organisation_id` in `users.json`
+
+
+
+## Highlights
+
+- Had basic CI(Github workflow) pipeline setup
+- Containerised Application
+- Created indexes for all entities and fields, after all the entities been scanned, no matter how many items we have, the search time complexity is always O(1).
+- Used [table driven test](https://github.com/golang/go/wiki/TableDrivenTests)
+
 
 ## If I had more time / What can I improve
 

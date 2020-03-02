@@ -19,6 +19,7 @@ func main() {
 	if err := app.BuildIndexes(); err != nil {
 		panic("failed to build indexes: " + err.Error())
 	}
+	
 	for {
 
 		prompt := promptui.Select{
