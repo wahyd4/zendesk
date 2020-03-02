@@ -65,7 +65,7 @@ For example the index map for `organisations` looks like:
 
 ![organisations index map](./index_example.png)
 
-In first level the key is the field name, the value for the key is a another map, which each key presents one uniq value for that field, and the value is a array of all the matched model reference(pointer).
+In the outer level of the map the key is the field name, the value is a map, which each key presents one uniq value for that field, and the value is a array of all the matched model reference(pointer).
 
 Besides, I also created a `SearchIndex` to present one type of model which can be searched. So we end up with having `3` different indexes which implement `ListSearchableFields` and `Search` method for each model type. It decouples the logic and decreases the duplication.
 
