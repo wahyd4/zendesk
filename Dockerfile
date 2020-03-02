@@ -21,5 +21,6 @@ WORKDIR /home/zendesk
 USER zendesk
 
 COPY --from=build /app/zendesk/bin/app .
+COPY --from=build /app/zendesk/data ./data
 
 CMD [ "/home/zendesk/app" ]
