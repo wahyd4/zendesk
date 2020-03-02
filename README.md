@@ -8,6 +8,13 @@
 
 
 
+## Highlights
+
+- Had basic CI(Github workflow) pipeline setup
+- Containerised Application
+- Usd `map` to index all entities and fields, after all the entities been scanned, how many how many items we have, the time complexity is always O(1).
+- Used [table driven test](https://github.com/golang/go/wiki/TableDrivenTests)
+
 ## How to
 
 ### How to run
