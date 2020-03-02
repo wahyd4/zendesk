@@ -89,6 +89,7 @@ Last but not least, the `Search()` method will delegate the call the one `Search
 
 - Better object printing instead of using `spew.Dump()`
 - Reuse more shard logic especially in `search/index.go`, but due to Go missing generics concept it's different when compare to `Ruby`, `Java` and some other popular languages.
-- Add more tests, due to this code test costs me a lot of time to complete, so I didn't cover all the code currently, but I am keen to add more tests if possible.
+- Add more tests with more check points. Due to this code test costs me a lot of time to complete, so I didn't cover all the code currently, but I am keen to add more tests if possible.
 - Better user experience in CLI application, current the cli app is very basic and go can't go back to previous menu.
 - Better error handling instead of just `panic`
+- Adopt a logging framework, instead of just `fmt.Prntln`
