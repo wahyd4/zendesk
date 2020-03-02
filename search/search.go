@@ -1,5 +1,11 @@
 package search
 
+import (
+	"fmt"
+
+	"github.com/davecgh/go-spew/spew"
+)
+
 // SearchContext holds the information of current search context
 type SearchContext struct {
 	dataType  string
@@ -30,5 +36,12 @@ func (app *APP) Search(value string) {
 	dataType := app.searchContext.dataType
 	field := app.searchContext.fieldName
 
-	app.indexes[dataType].Search(field, value)
+	searchResult := app.indexes[dataType].Search(field, value)
+
+	if searchResult == nil {
+		fmt.Printf("Cannot find any matched result from %s with %s:%s \n\n", dataType, field, value)
+		return
+	}
+
+	spew.Dump(searchResult)
 }

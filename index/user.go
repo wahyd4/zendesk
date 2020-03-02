@@ -1,7 +1,6 @@
 package index
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	"github.com/wahyd4/zendesk/model"
 )
 
@@ -17,8 +16,9 @@ func (index UserIndex) ListSearchableFields() []string {
 	return result
 }
 
-func (index UserIndex) Search(field, value string) {
-	users := index.Data[field][value]
-
-	spew.Dump(users)
+func (index UserIndex) Search(field, value string) interface{} {
+	if len(index.Data[field][value]) == 0 {
+		return nil
+	}
+	return index.Data[field][value]
 }
