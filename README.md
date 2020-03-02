@@ -1,5 +1,9 @@
 # Zendesk Code Challenge
 
+[![Github Build](https://github.com/wahyd4/zendesk/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/wahyd4/zendesk/actions)
+
+
+
 ## How does it application work
 
 
